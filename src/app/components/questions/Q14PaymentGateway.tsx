@@ -42,9 +42,9 @@ export function Q14PaymentGateway({ value, onChange }: QuestionProps) {
           className="flex items-center space-x-4 p-6 rounded-2xl border-2 border-gray-200 bg-white/60 cursor-pointer hover:border-[#39FF14] hover:bg-[#39FF14]/5 transition-all"
           whileHover={{ x: 5, scale: 1.02 }}
         >
-          <RadioGroupItem value="other" id="other" className="border-gray-400 text-[#39FF14] w-6 h-6" />
-          <Label htmlFor="other" className="cursor-pointer text-gray-700 text-lg flex-1">
-            Something else
+          <RadioGroupItem value="no-account" id="no-account" className="border-gray-400 text-[#39FF14] w-6 h-6" />
+          <Label htmlFor="no-account" className="cursor-pointer text-gray-700 text-lg flex-1">
+            No Account
           </Label>
         </motion.div>
       </RadioGroup>
