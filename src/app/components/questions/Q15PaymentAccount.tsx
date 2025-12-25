@@ -1,8 +1,7 @@
 import { motion } from 'motion/react';
 import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
-import { Input } from '../ui/input';
-import { CreditCard, Lock, User } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 
 interface QuestionProps {
   value: any;
@@ -10,63 +9,7 @@ interface QuestionProps {
   data: any;
 }
 
-export function Q15PaymentAccount({ value, onChange, data }: QuestionProps) {
-  const gateway = data?.paymentGateway;
-  const isCredentialsRequired = gateway === 'stripe' || gateway === 'paypal';
-
-  if (isCredentialsRequired) {
-    const currentVal = typeof value === 'object' && value !== null ? value : { username: '', password: '' };
-
-    const updateField = (field: string, newVal: string) => {
-      onChange({ ...currentVal, [field]: newVal });
-    };
-
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="space-y-6"
-      >
-        <Label className="text-xl text-gray-700 mb-2 block flex items-center gap-3">
-          <CreditCard className="w-6 h-6 text-blue-600" />
-          Enter your {gateway === 'stripe' ? 'Stripe' : 'PayPal'} credentials
-        </Label>
-        
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username" className="text-gray-600 flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Username / Email
-            </Label>
-            <Input
-              id="username"
-              value={currentVal.username || ''}
-              onChange={(e) => updateField('username', e.target.value)}
-              placeholder="e.g. user@example.com"
-              className="bg-white text-black"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-gray-600 flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              Password
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              value={currentVal.password || ''}
-              onChange={(e) => updateField('password', e.target.value)}
-              placeholder="••••••••"
-              className="bg-white text-black"
-            />
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
+export function Q15PaymentAccount({ value, onChange }: QuestionProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
