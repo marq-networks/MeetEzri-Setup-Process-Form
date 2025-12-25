@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { toast } from 'sonner';
 import { QuestionTimeline } from './QuestionTimeline';
 import { AIBackground } from './AIBackground';
 import marqLogo from '../../assets/b50a1f14c33063011f99a0056a557c8da11ecf21.png';
@@ -28,7 +29,12 @@ import { Q18MoodCheckIns } from './questions/Q18MoodCheckIns';
 import { Q19WellnessTools } from './questions/Q19WellnessTools';
 import { Q20UserHistory } from './questions/Q20UserHistory';
 
-const questions = [
+const questions: {
+  title: string;
+  field: string;
+  component: React.ComponentType<any>;
+  optional?: boolean;
+}[] = [
   { title: 'Product Name', field: 'productName', component: Q1ProductName },
   { title: 'Your Logo', field: 'logo', component: Q2Logo },
   { title: 'Brand Colors', field: 'brandColors', component: Q3BrandColors },
@@ -65,6 +71,15 @@ export function SetupForm({ onComplete }: SetupFormProps) {
   };
 
   const handleNext = () => {
+    const currentQuestionData = questions[currentQuestion - 1];
+    const currentValue = formData[currentQuestionData.field];
+
+    // Check if field is required and empty
+    if (!currentQuestionData.optional && (currentValue === undefined || currentValue === '' || currentValue === null)) {
+      toast.error('Please fill in this field to continue');
+      return;
+    }
+
     if (currentQuestion < totalQuestions) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
