@@ -75,10 +75,10 @@ export function SetupForm({ onComplete }: SetupFormProps) {
     const currentValue = formData[currentQuestionData.field];
 
     // Check if field is required and empty
-    if (!currentQuestionData.optional && (currentValue === undefined || currentValue === '' || currentValue === null)) {
-      toast.error('Please fill in this field to continue');
-      return;
-    }
+    // if (!currentQuestionData.optional && (currentValue === undefined || currentValue === '' || currentValue === null)) {
+    //   toast.error('Please fill in this field to continue');
+    //   return;
+    // }
 
     if (currentQuestion < totalQuestions) {
       setCurrentQuestion(currentQuestion + 1);
