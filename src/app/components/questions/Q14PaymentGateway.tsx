@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Input } from '../ui/input';
 import { DollarSign } from 'lucide-react';
 
 interface QuestionProps {
@@ -9,6 +10,22 @@ interface QuestionProps {
 }
 
 export function Q14PaymentGateway({ value, onChange }: QuestionProps) {
+  const isKnownOption = ['stripe', 'paypal', 'no-account'].includes(value);
+  const isCustom = !isKnownOption && value !== undefined && value !== null && value !== '';
+  const radioValue = isKnownOption ? value : (isCustom ? 'custom' : value);
+
+  const handleRadioChange = (val: string) => {
+    if (val === 'custom') {
+      onChange('Custom Gateway'); // Initialize with placeholder or keep empty? 'Custom Gateway' indicates selection.
+    } else {
+      onChange(val);
+    }
+  };
+
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -19,7 +36,7 @@ export function Q14PaymentGateway({ value, onChange }: QuestionProps) {
         <DollarSign className="w-6 h-6 text-green-600" />
         Which payment gateway do you prefer?
       </Label>
-      <RadioGroup value={value} onValueChange={onChange} className="space-y-4">
+      <RadioGroup value={radioValue} onValueChange={handleRadioChange} className="space-y-4">
         <motion.div 
           className="flex items-center space-x-4 p-6 rounded-2xl border-2 border-gray-200 bg-white/60 cursor-pointer hover:border-[#39FF14] hover:bg-[#39FF14]/5 transition-all"
           whileHover={{ x: 5, scale: 1.02 }}
@@ -46,6 +63,26 @@ export function Q14PaymentGateway({ value, onChange }: QuestionProps) {
           <Label htmlFor="no-account" className="cursor-pointer text-gray-700 text-lg flex-1">
             No Account
           </Label>
+        </motion.div>
+        <motion.div 
+          className="flex flex-col space-y-4 p-6 rounded-2xl border-2 border-gray-200 bg-white/60 cursor-pointer hover:border-[#39FF14] hover:bg-[#39FF14]/5 transition-all"
+          whileHover={{ x: 5, scale: 1.02 }}
+        >
+          <div className="flex items-center space-x-4">
+            <RadioGroupItem value="custom" id="custom" className="border-gray-400 text-[#39FF14] w-6 h-6" />
+            <Label htmlFor="custom" className="cursor-pointer text-gray-700 text-lg flex-1">
+              Custom Gateway
+            </Label>
+          </div>
+          {radioValue === 'custom' && (
+            <Input 
+              value={isCustom ? value : ''}
+              onChange={handleCustomInputChange}
+              placeholder="Enter gateway name"
+              className="bg-white text-black mt-2"
+              autoFocus
+            />
+          )}
         </motion.div>
       </RadioGroup>
     </motion.div>

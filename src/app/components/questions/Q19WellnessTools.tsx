@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
 import { Label } from '../ui/label';
 import { Checkbox } from '../ui/checkbox';
-import { Sparkles } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Sparkles, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface QuestionProps {
   value: any;
@@ -20,13 +22,50 @@ const wellnessToolOptions = [
 ];
 
 export function Q19WellnessTools({ value, onChange }: QuestionProps) {
-  const selectedTools = value || [];
+  const selectedTools = Array.isArray(value) ? value : [];
+  const [customTool, setCustomTool] = useState('');
+  const [isCustomChecked, setIsCustomChecked] = useState(false);
+
+  // Initialize custom tool state from value if present
+  useEffect(() => {
+    const custom = selectedTools.find((t: string) => 
+      !wellnessToolOptions.some(opt => opt.name === t) && t !== 'Custom Tool'
+    );
+    if (custom) {
+      setCustomTool(custom);
+      setIsCustomChecked(true);
+    }
+  }, []);
 
   const handleToggle = (toolName: string) => {
     const newTools = selectedTools.includes(toolName)
       ? selectedTools.filter((t: string) => t !== toolName)
       : [...selectedTools, toolName];
     onChange(newTools);
+  };
+
+  const handleCustomCheck = (checked: boolean) => {
+    setIsCustomChecked(checked);
+    if (!checked) {
+      // Remove custom tool if unchecked
+      if (customTool) {
+        onChange(selectedTools.filter((t: string) => t !== customTool));
+      }
+      setCustomTool('');
+    }
+  };
+
+  const handleCustomToolChange = (newValue: string) => {
+    setCustomTool(newValue);
+    // Remove old custom tool and add new one
+    const toolsWithoutCustom = selectedTools.filter((t: string) => 
+      wellnessToolOptions.some(opt => opt.name === t)
+    );
+    if (newValue.trim()) {
+      onChange([...toolsWithoutCustom, newValue]);
+    } else {
+      onChange(toolsWithoutCustom);
+    }
   };
 
   return (
@@ -62,6 +101,38 @@ export function Q19WellnessTools({ value, onChange }: QuestionProps) {
             </Label>
           </motion.div>
         ))}
+        
+        {/* Custom Tool Option */}
+        <motion.div 
+          className="flex flex-col space-y-3 p-5 rounded-2xl border-2 border-gray-200 bg-white/60 cursor-pointer hover:border-[#39FF14] hover:bg-[#39FF14]/5 transition-all col-span-2 md:col-span-1"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileHover={{ scale: 1.03 }}
+        >
+          <div className="flex items-center space-x-3">
+            <Checkbox
+              id="custom-tool"
+              checked={isCustomChecked}
+              onCheckedChange={handleCustomCheck}
+              className="border-gray-300 data-[state=checked]:bg-[#39FF14] data-[state=checked]:text-black data-[state=checked]:border-[#39FF14] w-6 h-6"
+            />
+            <Label htmlFor="custom-tool" className="cursor-pointer text-gray-700 text-base flex items-center gap-2 flex-1">
+              <Plus className="w-5 h-5" />
+              Add Custom Tool
+            </Label>
+          </div>
+          
+          {isCustomChecked && (
+            <Input
+              value={customTool}
+              onChange={(e) => handleCustomToolChange(e.target.value)}
+              placeholder="Enter tool name..."
+              className="mt-2 bg-white text-black"
+              autoFocus
+            />
+          )}
+        </motion.div>
       </div>
     </motion.div>
   );
